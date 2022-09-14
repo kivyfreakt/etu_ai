@@ -24,13 +24,13 @@ import sys
 from enum import Enum
 from time import process_time
 
-start_time = 0 # время запуска программы
-tree = None # дерево решения todo: RENAME?
+start_time = 0  # время запуска программы
+tree = None  # дерево решения todo: RENAME?
 
-# todo: RENAME & FIX?
-class Tree:
+
+class Tree:  # todo: RENAME & FIX?
     ''' Класс представления дерева '''
-    __nodes = None # все узлы
+    __nodes = None  # все узлы
 
     def __init__(self):
         node = Node(get_initial_state(), None, None, 0, 0)
@@ -44,19 +44,19 @@ class Tree:
             self.__nodes[level] = [new_node]
         else:
             self.__nodes[level].append(new_node)
-    
+
     # todo: ))
     def print_node(self, node):
         print(node.id)
-    
+
     def print_path(self, node):
         path = []
         current_node = node
 
-        while(current_node.parent_node != None):
+        while (current_node.parent_node != None):
             path.append(current_node)
             current_node = current_node.parent_node
-        
+
         path.append(current_node)
 
         for n in path:
@@ -73,11 +73,13 @@ class Action(Enum):
 
 class Node:
     ''' Класс представления узла '''
-    current_state = None # Состояние в пространстве состояний, которому соответствует данный узел
-    parent_node = None # Указатель на родительский узел
-    previous_action = None # Действие, которое было применено к родительскому узлу для формирования данного узла
-    path_cost = None # Стоимость пути от начального состояния до данного узла g(n)
-    depth = None # Количество этапов пути от начального состояния (глубина)
+    current_state = None  # Состояние в пространстве состояний, которому соответствует данный узел
+    parent_node = None  # Указатель на родительский узел
+    # Действие, которое было применено к родительскому узлу для формирования данного узла
+    previous_action = None
+    # Стоимость пути от начального состояния до данного узла g(n)
+    path_cost = None
+    depth = None  # Количество этапов пути от начального состояния (глубина)
     id = None
 
     nodes_count = 0
@@ -94,33 +96,35 @@ class Node:
     # А НУЖЕН ЛИ ОН БУДЕТ?
     @classmethod
     def get_nodes_count(cls) -> int:
-        ''' Статический метод класса, возвращающий количество узлов ''' 
+        ''' Статический метод класса, возвращающий количество узлов '''
         return cls.nodes_count + 1
 
 
 def get_initial_state() -> list:
     ''' Получение начального состояния игры (Вариант 4) '''
     return [6, 0, 8,
-            5, 2, 1, 
-            4, 3, 7,]
+            5, 2, 1,
+            4, 3, 7, ]
+
 
 def get_finish_state() -> list:
     ''' Получение конечного состояния игры (Вариант 4) '''
-    return [1, 2, 3, 
-            8, 0, 4, 
-            7, 6, 5,]
+    return [1, 2, 3,
+            8, 0, 4,
+            7, 6, 5, ]
+
 
 def check_final(current_state: list) -> bool:
     ''' Проверка, является ли данное состояние конечным '''
     return current_state == get_finish_state()
 
-# todo: RENAME?
-def print_results(iterations: int, current_node: Node): 
+
+def print_results(iterations: int, current_node: Node):  # todo: RENAME?
     ''' Вывод результатов программы '''
     finish_time = process_time()
 
     tree.print_path(current_node)
-    
+
     # todo: Добавить вывод другой информации, которую нужно по заданию (напр, память)
     print(f"Iteration count: {iterations}")
     print(f"Time: {(finish_time-start_time)*1000} ms")
@@ -144,7 +148,7 @@ def get_new_states(current_state: list) -> dict:
         state = list(current_state)
         state[pos], state[pos+3] = state[pos+3], state[pos]
         new_states[Action.DOWN] = state
-    
+
     # right
     if pos not in (2, 5, 8):
         state = list(current_state)
@@ -162,7 +166,8 @@ def get_new_states(current_state: list) -> dict:
 
 def dfs():
     ''' Поиск в глубину '''
-    visited_states_hash = set() # Для отслеживания, что состояния поля уже где-то были, иначе - бесконечный цикл
+    visited_states_hash = set()
+    # Для отслеживания, что состояния поля уже где-то были, иначе - бесконечный цикл
     visited = set()
     stack = []
 
@@ -170,8 +175,8 @@ def dfs():
 
     steps = 1
     iterations = 0
-    
-    while(len(stack) != 0):
+
+    while (len(stack) != 0):
         current_node = stack.pop()
         visited.add(current_node.id)
 
@@ -186,9 +191,9 @@ def dfs():
         neighbors = []
         level = current_node.depth
         for action, new_state in new_states.items():
-            
+
             new_state_hash = hash(tuple(new_state))
-            if(new_state_hash in visited_states_hash):
+            if (new_state_hash in visited_states_hash):
                 continue
 
             # todo: КАКАЯ СТОИМОСТЬ НАДО ВПИСАТЬ
@@ -196,13 +201,14 @@ def dfs():
             neighbors.append(new_node)
             visited_states_hash.add(new_state_hash)
             tree.add_node(level + 1, new_node)
-        
+
         for next_node in neighbors:
-            if(next_node.id not in visited):
+            if (next_node.id not in visited):
                 stack.append(next_node)
 
         steps += 1
     print("WTF")
+
 
 if __name__ == '__main__':
     # начать отсчет времени
@@ -220,9 +226,11 @@ if __name__ == '__main__':
             print(f"{sys.argv[0]} --dfs - Depth First Search algorithm")
             print(f"{sys.argv[0]} --bds - BiDirectional Search algorithm")
         else:
-            print(f"Error! Invalid input parameter. \nPrint {sys.argv[0]} -h  \nExit")
+            print(
+                f"Error! Invalid input parameter. \nPrint {sys.argv[0]} -h  \nExit")
     else:
-        print(f"Error! Incorrect number of parameters. \nPrint {sys.argv[0]} -h \nExit")
+        print(
+            f"Error! Incorrect number of parameters. \nPrint {sys.argv[0]} -h \nExit")
 
     # создать ...
     tree = Tree()
