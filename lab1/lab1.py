@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-''' 
+'''
 в глубину, двунаправленный
 
 НАЧАЛО
@@ -14,18 +14,18 @@
 7	6	5
 
 
-Рассел С, Норвиг П. Искусственный интеллект: современный подход, 2-е изд., М. «Вильямс», 2006. – 1408 с.:
+Рассел С, Норвиг П. Искусственный интеллект: современный подход,
+2-е изд., М. «Вильямс», 2006. – 1408 с.:
 Двунаправленный	135–136
 
 '''
 
-import os
 import sys
 from enum import Enum
 from time import process_time
 
-start_time = 0  # время запуска программы
-tree = None  # дерево решения todo: RENAME?
+START_TIME = 0  # время запуска программы
+TREE = None  # дерево решения todo: RENAME?
 
 
 class Tree:  # todo: RENAME & FIX?
@@ -37,9 +37,11 @@ class Tree:  # todo: RENAME & FIX?
         self.__nodes = {0: [node]}
 
     def get_root(self) -> list:
+        ''' Получить корень дерева '''
         return list(self.__nodes[0])
 
     def add_node(self, level, new_node):
+        ''' Добавить узел в дерево '''
         if level not in self.__nodes:
             self.__nodes[level] = [new_node]
         else:
@@ -47,20 +49,22 @@ class Tree:  # todo: RENAME & FIX?
 
     # todo: ))
     def print_node(self, node):
-        print(node.id)
+        ''' Вывод узла на экран '''
+        print(node.node_id)
 
     def print_path(self, node):
+        ''' Вывод пути на экран '''
         path = []
         current_node = node
 
-        while (current_node.parent_node != None):
+        while current_node.parent_node:
             path.append(current_node)
             current_node = current_node.parent_node
 
         path.append(current_node)
 
-        for n in path:
-            self.print_node(n)
+        for path_node in path:
+            self.print_node(path_node)
 
 
 class Action(Enum):
@@ -80,7 +84,7 @@ class Node:
     # Стоимость пути от начального состояния до данного узла g(n)
     path_cost = None
     depth = None  # Количество этапов пути от начального состояния (глубина)
-    id = None
+    node_id = None
 
     nodes_count = 0
 
@@ -90,7 +94,7 @@ class Node:
         self.previous_action = action
         self.path_cost = cost
         self.depth = depth
-        self.id = Node.nodes_count
+        self.node_id = Node.nodes_count
         Node.nodes_count += 1
 
     # А НУЖЕН ЛИ ОН БУДЕТ?
@@ -123,12 +127,12 @@ def print_results(iterations: int, current_node: Node):  # todo: RENAME?
     ''' Вывод результатов программы '''
     finish_time = process_time()
 
-    tree.print_path(current_node)
+    TREE.print_path(current_node)
 
     # todo: Добавить вывод другой информации, которую нужно по заданию (напр, память)
     print(f"Iteration count: {iterations}")
-    print(f"Time: {(finish_time-start_time)*1000} ms")
-    exit()
+    print(f"Time: {(finish_time-START_TIME)*1000} ms")
+    sys.exit(0)
 
 
 # todo: ГОВНОКОД, ПЕРЕПИСАТЬ
@@ -171,72 +175,74 @@ def dfs():
     visited = set()
     stack = []
 
-    stack += tree.get_root()
+    stack += TREE.get_root()
 
     steps = 1
     iterations = 0
 
-    while (len(stack) != 0):
+    while len(stack) != 0:
         current_node = stack.pop()
-        visited.add(current_node.id)
+        visited.add(current_node.node_id)
 
         iterations += 1
         if check_final(current_node.current_state):
             print_results(iterations, current_node)
 
         new_states = get_new_states(current_node.current_state)
-
-        print(new_states)
-
         neighbors = []
         level = current_node.depth
         for action, new_state in new_states.items():
 
             new_state_hash = hash(tuple(new_state))
-            if (new_state_hash in visited_states_hash):
+            if new_state_hash in visited_states_hash:
                 continue
 
             # todo: КАКАЯ СТОИМОСТЬ НАДО ВПИСАТЬ
             new_node = Node(new_state, current_node, action, level + 1, 0)
             neighbors.append(new_node)
             visited_states_hash.add(new_state_hash)
-            tree.add_node(level + 1, new_node)
+            TREE.add_node(level + 1, new_node)
 
         for next_node in neighbors:
-            if (next_node.id not in visited):
+            if next_node.node_id not in visited:
                 stack.append(next_node)
 
         steps += 1
     print("WTF")
 
 
+def bnode_idirectional_search():
+    ''' Двунаправленный поиск '''
+    print("todo")
+
+
 if __name__ == '__main__':
     # начать отсчет времени
-    start_time = process_time()
+    START_TIME = process_time()
 
     # парсинг входных значений
     # todo: ГОВНОКОД ПЕРЕПИСАТЬ
-    algorithm_flag = None
-    if (len(sys.argv) == 2):
-        if (sys.argv[1] == '--dfs'):
-            algorithm_flag = 0
-        elif (sys.argv[1] == '--bds'):
-            algorithm_flag = 1
-        elif (sys.argv[1] == '-h'):
+    ALGORITHM_FLAG = None
+    if len(sys.argv) == 2:
+        if sys.argv[1] == '--dfs':
+            ALGORITHM_FLAG = 0
+        elif sys.argv[1] == '--bds':
+            ALGORITHM_FLAG = 1
+        elif sys.argv[1] == '-h':
             print(f"{sys.argv[0]} --dfs - Depth First Search algorithm")
             print(f"{sys.argv[0]} --bds - BiDirectional Search algorithm")
         else:
             print(
-                f"Error! Invalid input parameter. \nPrint {sys.argv[0]} -h  \nExit")
+                f"Error! Invalnode_id input parameter. \nPrint {sys.argv[0]} -h  \nExit")
     else:
         print(
             f"Error! Incorrect number of parameters. \nPrint {sys.argv[0]} -h \nExit")
 
     # создать ...
-    tree = Tree()
+    TREE = Tree()
 
     # запуск
-    if algorithm_flag == 0:
+    if ALGORITHM_FLAG == 0:
         dfs()
-    elif algorithm_flag == 1:
-        bidirectional_search()
+    elif ALGORITHM_FLAG == 1:
+        bnode_idirectional_search()
