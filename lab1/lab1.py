@@ -23,9 +23,13 @@
 import sys
 from enum import Enum
 from time import process_time
+from collections import deque
 
 START_TIME = 0  # время запуска программы
 TREE = None  # дерево решения todo: RENAME?
+common_visited1 = []
+common_visited2 = []
+flag = 1
 
 
 class Tree:  # todo: RENAME & FIX?
@@ -40,7 +44,7 @@ class Tree:  # todo: RENAME & FIX?
         ''' Получить корень дерева '''
         return list(self.__nodes[0])
 
-    def add_node(self, level, new_node):
+    def add_node(self, level: int, new_node):
         ''' Добавить узел в дерево '''
         if level not in self.__nodes:
             self.__nodes[level] = [new_node]
@@ -94,7 +98,7 @@ class Node:
         self.previous_action = action
         self.path_cost = cost
         self.depth = depth
-        self.node_id = Node.nodes_count
+        self.node_id = hash(tuple(state))
         Node.nodes_count += 1
 
     # А НУЖЕН ЛИ ОН БУДЕТ?
@@ -108,14 +112,14 @@ def get_initial_state() -> list:
     ''' Получение начального состояния игры (Вариант 4) '''
     return [6, 0, 8,
             5, 2, 1,
-            4, 3, 7, ]
+            4, 3, 7 ]
 
 
 def get_finish_state() -> list:
     ''' Получение конечного состояния игры (Вариант 4) '''
     return [1, 2, 3,
             8, 0, 4,
-            7, 6, 5, ]
+            7, 6, 5 ]
 
 
 def check_final(current_state: list) -> bool:
@@ -187,6 +191,7 @@ def dfs():
         iterations += 1
         if check_final(current_node.current_state):
             print_results(iterations, current_node)
+            break
 
         new_states = get_new_states(current_node.current_state)
         neighbors = []
@@ -211,9 +216,33 @@ def dfs():
     print("WTF")
 
 
-def bnode_idirectional_search():
+def bnode_idirectional_search(start, goal):
     ''' Двунаправленный поиск '''
-    print("todo")
+    found, fringe1, visited1, came_from1 = False, deque([start]), set([start]), {start: None}
+    meet, fringe2, visited2, came_from2 = None, deque([goal]), set([goal]), {goal: None}
+    iterations = 0
+    while not found and (len(fringe1) or len(fringe2)):
+        iterations += 1
+        if len(fringe1):
+            current1 = fringe1.pop()
+            if current1.node_id in visited2: meet = current1; found = True; break
+            for action, nodeState in get_new_states(current1.current_state).items():
+                node = Node(nodeState, current1, action, current1.depth + 1, 0)
+                if node.node_id not in visited1: visited1.add(node.node_id); fringe1.appendleft(node); came_from1[node] = current1
+        if len(fringe2):
+            current2 = fringe2.pop()
+            if current2.node_id in visited1: meet = current2; found = True; break
+            for action, nodeState in get_new_states(current2.current_state).items():
+                node = Node(nodeState, current2, action, current1.depth + 1, 0)
+                if node.node_id not in visited2: visited2.add(node.node_id); fringe2.appendleft(node); came_from2[node] = current2
+    if found:
+        finish_time = process_time()
+        print(f"Iteration count: {iterations}")
+        print(f"Time: {(finish_time-START_TIME)*1000} ms")
+        return came_from1, came_from2, meet
+    else: print('No path between {} and {}'.format(start, goal)); return None, None, None
+
+
 
 
 if __name__ == '__main__':
@@ -244,5 +273,12 @@ if __name__ == '__main__':
     # запуск
     if ALGORITHM_FLAG == 0:
         dfs()
+        print(TREE.__nodes)
     elif ALGORITHM_FLAG == 1:
-        bnode_idirectional_search()
+        start = Node(get_initial_state(), None, None, 0, 0)
+        end = Node(get_finish_state(), None, None, 0, 0)
+        came_from1, came_from2, meet = bnode_idirectional_search(start, end)
+    
+        
+        
+
