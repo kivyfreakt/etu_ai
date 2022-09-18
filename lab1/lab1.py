@@ -21,15 +21,12 @@
 '''
 
 import sys
+import argparse
 from enum import Enum
 from time import process_time
-from collections import deque
 
 START_TIME = 0  # время запуска программы
 TREE = None  # дерево решения todo: RENAME?
-common_visited1 = []
-common_visited2 = []
-flag = 1
 
 
 class Tree:  # todo: RENAME & FIX?
@@ -127,7 +124,7 @@ def check_final(current_state: list) -> bool:
     return current_state == get_finish_state()
 
 
-def print_results(iterations: int, current_node: Node):  # todo: RENAME?
+def print_results(iterations: int, current_node: Node):
     ''' Вывод результатов программы '''
     finish_time = process_time()
 
@@ -202,8 +199,7 @@ def dfs():
             if new_state_hash in visited_states_hash:
                 continue
 
-            # todo: КАКАЯ СТОИМОСТЬ НАДО ВПИСАТЬ
-            new_node = Node(new_state, current_node, action, level + 1, 0)
+            new_node = Node(new_state, current_node, action, level + 1, level + 1)
             neighbors.append(new_node)
             visited_states_hash.add(new_state_hash)
             TREE.add_node(level + 1, new_node)
@@ -216,7 +212,7 @@ def dfs():
     print("WTF")
 
 
-def bnode_idirectional_search(start, goal):
+def bidirectional_search(start, goal):
     ''' Двунаправленный поиск '''
     found, fringe1, visited1, came_from1 = False, deque([start]), set([start]), {start: None}
     meet, fringe2, visited2, came_from2 = None, deque([goal]), set([goal]), {goal: None}
@@ -225,23 +221,36 @@ def bnode_idirectional_search(start, goal):
         iterations += 1
         if len(fringe1):
             current1 = fringe1.pop()
-            if current1.node_id in visited2: meet = current1; found = True; break
-            for action, nodeState in get_new_states(current1.current_state).items():
-                node = Node(nodeState, current1, action, current1.depth + 1, 0)
-                if node.node_id not in visited1: visited1.add(node.node_id); fringe1.appendleft(node); came_from1[node] = current1
+            if current1.node_id in visited2:
+                meet = current1
+                found = True
+                break
+            for action, node_state in get_new_states(current1.current_state).items():
+                node = Node(node_state, current1, action, current1.depth + 1, 0)
+                if node.node_id not in visited1:
+                    visited1.add(node.node_id)
+                    fringe1.appendleft(node)
+                    came_from1[node] = current1
         if len(fringe2):
             current2 = fringe2.pop()
-            if current2.node_id in visited1: meet = current2; found = True; break
-            for action, nodeState in get_new_states(current2.current_state).items():
-                node = Node(nodeState, current2, action, current1.depth + 1, 0)
-                if node.node_id not in visited2: visited2.add(node.node_id); fringe2.appendleft(node); came_from2[node] = current2
+            if current2.node_id in visited1:
+                meet = current2
+                found = True
+                break
+            for action, node_state in get_new_states(current2.current_state).items():
+                node = Node(node_state, current2, action, current1.depth + 1, 0)
+                if node.node_id not in visited2:
+                    visited2.add(node.node_id)
+                    fringe2.appendleft(node)
+                    came_from2[node] = current2
     if found:
         finish_time = process_time()
         print(f"Iteration count: {iterations}")
         print(f"Time: {(finish_time-START_TIME)*1000} ms")
         return came_from1, came_from2, meet
-    else: print('No path between {} and {}'.format(start, goal)); return None, None, None
-
+    
+    print(f"No path between {start} and {goal}")
+    return None, None, None
 
 
 
@@ -250,22 +259,14 @@ if __name__ == '__main__':
     START_TIME = process_time()
 
     # парсинг входных значений
-    # todo: ГОВНОКОД ПЕРЕПИСАТЬ
-    ALGORITHM_FLAG = None
-    if len(sys.argv) == 2:
-        if sys.argv[1] == '--dfs':
-            ALGORITHM_FLAG = 0
-        elif sys.argv[1] == '--bds':
-            ALGORITHM_FLAG = 1
-        elif sys.argv[1] == '-h':
-            print(f"{sys.argv[0]} --dfs - Depth First Search algorithm")
-            print(f"{sys.argv[0]} --bds - BiDirectional Search algorithm")
-        else:
-            print(
-                f"Error! Invalnode_id input parameter. \nPrint {sys.argv[0]} -h  \nExit")
-    else:
-        print(
-            f"Error! Incorrect number of parameters. \nPrint {sys.argv[0]} -h \nExit")
+    parser = argparse.ArgumentParser(description = "Solve 8-puzzle game")
+    parser.add_argument('algorithm', type = str, help = 'name of the algorithm used (list: dfs, bds)')
+    parser.add_argument("-m", "--manual", action='store_true', help = "step-by-step mode of operation of the program")
+    
+    args = parser.parse_args()
+
+    MANUAL_FLAG = args.manual
+    ALGORITHM_FLAG = args.algorithm != "dfs"
 
     # создать ...
     TREE = Tree()
@@ -273,12 +274,7 @@ if __name__ == '__main__':
     # запуск
     if ALGORITHM_FLAG == 0:
         dfs()
-        print(TREE.__nodes)
     elif ALGORITHM_FLAG == 1:
         start = Node(get_initial_state(), None, None, 0, 0)
         end = Node(get_finish_state(), None, None, 0, 0)
-        came_from1, came_from2, meet = bnode_idirectional_search(start, end)
-    
-        
-        
-
+        came_from1, came_from2, meet = bidirectional_search(start, end)
