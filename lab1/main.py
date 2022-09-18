@@ -24,6 +24,9 @@ import sys
 import argparse
 from enum import Enum
 from time import process_time
+from collections import deque
+
+from solver.visualiser import visualizer
 
 START_TIME = 0  # время запуска программы
 TREE = None  # дерево решения todo: RENAME?
@@ -59,13 +62,16 @@ class Tree:  # todo: RENAME & FIX?
         current_node = node
 
         while current_node.parent_node:
-            path.append(current_node)
+            path.append(current_node.current_state)
             current_node = current_node.parent_node
 
-        path.append(current_node)
+        path.append(current_node.current_state)
 
-        for path_node in path:
-            self.print_node(path_node)
+        # print(path)
+        # for path_node in path:
+        #     self.print_node(path_node)
+        
+        visualizer(path[::-1], 3)
 
 
 class Action(Enum):
@@ -212,37 +218,48 @@ def dfs():
     print("WTF")
 
 
-def bidirectional_search(start, goal):
+def bidirectional_search():
     ''' Двунаправленный поиск '''
+
+    start = Node(get_initial_state(), None, None, 0, 0)
+    goal = Node(get_finish_state(), None, None, 0, 0)
+
     found, fringe1, visited1, came_from1 = False, deque([start]), set([start]), {start: None}
     meet, fringe2, visited2, came_from2 = None, deque([goal]), set([goal]), {goal: None}
+
     iterations = 0
     while not found and (len(fringe1) or len(fringe2)):
         iterations += 1
         if len(fringe1):
             current1 = fringe1.pop()
+
             if current1.node_id in visited2:
                 meet = current1
                 found = True
                 break
+
             for action, node_state in get_new_states(current1.current_state).items():
-                node = Node(node_state, current1, action, current1.depth + 1, 0)
+                node = Node(node_state, current1, action, current1.depth + 1, current1.depth + 1)
                 if node.node_id not in visited1:
                     visited1.add(node.node_id)
                     fringe1.appendleft(node)
                     came_from1[node] = current1
+    
         if len(fringe2):
             current2 = fringe2.pop()
+
             if current2.node_id in visited1:
                 meet = current2
                 found = True
                 break
+
             for action, node_state in get_new_states(current2.current_state).items():
-                node = Node(node_state, current2, action, current1.depth + 1, 0)
+                node = Node(node_state, current2, action, current2.depth + 1, current2.depth + 1)
                 if node.node_id not in visited2:
                     visited2.add(node.node_id)
                     fringe2.appendleft(node)
                     came_from2[node] = current2
+    
     if found:
         finish_time = process_time()
         print(f"Iteration count: {iterations}")
@@ -275,6 +292,4 @@ if __name__ == '__main__':
     if ALGORITHM_FLAG == 0:
         dfs()
     elif ALGORITHM_FLAG == 1:
-        start = Node(get_initial_state(), None, None, 0, 0)
-        end = Node(get_finish_state(), None, None, 0, 0)
-        came_from1, came_from2, meet = bidirectional_search(start, end)
+        came_from1, came_from2, meet = bidirectional_search()
