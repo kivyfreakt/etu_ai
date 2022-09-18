@@ -2,7 +2,7 @@
 
 '''
 
-Задание на работу: 
+Задание на работу:
 
 Реализовать решение задачи поиском в глубину и двунаправленным поиском
 
@@ -21,21 +21,24 @@
 import argparse
 from time import process_time
 
-import solver.common as common
+from solver import common
 from solver.search import dfs, bidirectional_search
 from solver.visualizer import visualizer
 from solver.tree import Tree, Node
 
 if __name__ == '__main__':
     # парсинг входных значений
-    parser = argparse.ArgumentParser(description = "Solve 8-puzzle game")
-    parser.add_argument('algorithm', type = str, help = 'name of the algorithm used (list: dfs, bds)')
-    parser.add_argument("-v", "--visualize", action='store_true', help = "Gui visualisation of puzzle solution")
-    parser.add_argument("-m", "--manual", action='store_true', help = "step-by-step mode of operation of the program")
+    parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
+    parser.add_argument('algorithm', type=str,
+                        help='name of the algorithm used (list: dfs, bds)')
+    parser.add_argument("-v", "--visualize", action='store_true',
+                        help="Gui visualisation of puzzle solution")
+    parser.add_argument("-m", "--manual", action='store_true',
+                        help="step-by-step mode of operation of the program")
 
     args = parser.parse_args()
 
-    # создать 
+    # создать
     common.TREE = Tree()
 
     # начать отсчет времени
@@ -58,7 +61,7 @@ if __name__ == '__main__':
     else:
         for state in solution:
             common.print_state(state)
-    
+
     # вывод результатов
     print(f"Iteration count: {iterations}")
     print(f"Nodes: {Node.get_nodes_count()}")

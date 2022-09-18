@@ -1,6 +1,10 @@
+'''
+    Структуры данных
+'''
+
 from enum import Enum
 
-import solver.common as common
+import common
 
 class Tree:
     ''' Класс представления дерева '''
@@ -33,7 +37,7 @@ class Tree:
         path.append(current_node.current_state)
 
         return path
-        
+
 
 # вообще может нахуй убрать, это только мешает, при этом нигде не используется
 # но по заданию это формально надо)
@@ -54,7 +58,7 @@ class Node:
     # Стоимость пути от начального состояния до данного узла g(n)
     path_cost = None
     depth = None  # Количество этапов пути от начального состояния (глубина)
-    node_id = None # уникальный идентификатор узла
+    node_id = None  # уникальный идентификатор узла
 
     nodes_count = 0
 

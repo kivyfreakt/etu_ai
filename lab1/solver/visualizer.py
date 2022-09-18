@@ -1,5 +1,9 @@
+'''
+    Визуализация головоломки
+'''
+
+import sys
 from tkinter import *
-from sys import exit
 
 GUI_FONT = ("Arial", 32)
 GUI_BOX_SIZE = 100
@@ -24,6 +28,7 @@ GUI_DASH = (5, 4, 5, 3)
 
 MANUAL_MODE = False
 
+
 def gui_replay(master, canvas, item_matrix, solution, puzzle_size):
     global GUI_FRAME_INDEX
 
@@ -33,7 +38,7 @@ def gui_replay(master, canvas, item_matrix, solution, puzzle_size):
     if GUI_FRAME_INDEX + 1 < len(solution):
         next_zero = solution[GUI_FRAME_INDEX + 1].index(0)
         color_this = solution[GUI_FRAME_INDEX][next_zero]
-    
+
     for y in range(puzzle_size):
         for x in range(puzzle_size):
             n = numbers[y + puzzle_size * x]
@@ -74,7 +79,7 @@ def gui_replay(master, canvas, item_matrix, solution, puzzle_size):
     if GUI_FRAME_INDEX >= len(solution):
         GUI_FRAME_INDEX = 0
     canvas.update()
-    
+
     if GUI_FRAME_INDEX != 0:
         master.after(
             GUI_DELAY, gui_replay, master, canvas, item_matrix, solution, puzzle_size
@@ -82,7 +87,7 @@ def gui_replay(master, canvas, item_matrix, solution, puzzle_size):
 
 
 def gui_close(event):
-    exit(0)
+    sys.exit(0)
 
 
 def gui_item_matrix(canvas, puzzle_size):
