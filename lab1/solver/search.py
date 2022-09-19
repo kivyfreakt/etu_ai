@@ -4,8 +4,8 @@
 
 from collections import deque
 
-import common
-from tree import Node, Action
+from solver import common
+from solver.tree import Node, Action
 
 
 def check_final(current_state: list) -> bool:

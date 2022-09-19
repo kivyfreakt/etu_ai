@@ -4,7 +4,7 @@
 
 from enum import Enum
 
-import common
+from solver import common
 
 class Tree:
     ''' Класс представления дерева '''
