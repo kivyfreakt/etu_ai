@@ -97,7 +97,7 @@ def bidirectional_search():
 
     start = Node(common.get_initial_state(), None, None, 0, 0)
     goal = Node(common.get_finish_state(), None, None, 0, 0)
-
+    
     found, fringe1, visited1, came_from1 = False, deque(
         [start]), set([start]), {start: None}
     meet, fringe2, visited2, came_from2 = None, deque(
