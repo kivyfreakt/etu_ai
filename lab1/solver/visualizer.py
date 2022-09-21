@@ -3,14 +3,14 @@
 '''
 
 import sys
-from tkinter import *
+from tkinter import Tk, Canvas
 
 GUI_FONT = ("Arial", 32)
 GUI_BOX_SIZE = 100
 GUI_BOX_SPACING = 10
 GUI_BOX_BORDER_WIDTH = 3
-GUI_FRAME_INDEX = 0
 GUI_DELAY = 200
+PUZZLE_SIZE = 3
 
 GUI_COLOR_1 = "#f5f5dc"
 GUI_COLOR_2 = "#e9e9af"
@@ -26,97 +26,98 @@ GUI_COLOR_BLACK = "#000000"
 
 GUI_DASH = (5, 4, 5, 3)
 
-MANUAL_MODE = False
+# MANUAL_MODE = False
 
 
-def gui_replay(master, canvas, item_matrix, solution, puzzle_size):
-    global GUI_FRAME_INDEX
-
-    numbers = solution[GUI_FRAME_INDEX]
+def gui_replay(master, frame, canvas, item_matrix, solution):
+    ''' Проигрывание анимации'''
+    numbers = solution[frame]
     next_zero = None
     color_this = None
-    if GUI_FRAME_INDEX + 1 < len(solution):
-        next_zero = solution[GUI_FRAME_INDEX + 1].index(0)
-        color_this = solution[GUI_FRAME_INDEX][next_zero]
+    if frame + 1 < len(solution):
+        next_zero = solution[frame + 1].index(0)
+        color_this = solution[frame][next_zero]
 
-    for y in range(puzzle_size):
-        for x in range(puzzle_size):
-            n = numbers[y + puzzle_size * x]
-            BORDER_COLOR = None
-            if n == solution[-1][y + puzzle_size * x]:
-                BORDER_COLOR = GUI_COLOR_GREEN
+    for row in range(PUZZLE_SIZE):
+        for col in range(PUZZLE_SIZE):
+            num = numbers[row + PUZZLE_SIZE * col]
+            border_color = None
+            if num == solution[-1][row + PUZZLE_SIZE * col]:
+                border_color = GUI_COLOR_GREEN
             else:
-                BORDER_COLOR = GUI_COLOR_RED
+                border_color = GUI_COLOR_RED
 
-            if n == 0:
+            if num == 0:
                 canvas.itemconfig(
-                    item_matrix[y][x][0],
+                    item_matrix[row][col][0],
                     fill=GUI_COLOR_2,
                     outline=GUI_COLOR_2,
                     width=GUI_BOX_BORDER_WIDTH,
                 )
-            elif n == color_this:
+            elif num == color_this:
                 canvas.itemconfig(
-                    item_matrix[y][x][0],
+                    item_matrix[row][col][0],
                     fill=GUI_COLOR_1,
-                    outline=BORDER_COLOR,
+                    outline=border_color,
                     width=GUI_BOX_BORDER_WIDTH,
                 )
             else:
                 canvas.itemconfig(
-                    item_matrix[y][x][0],
+                    item_matrix[row][col][0],
                     fill=GUI_COLOR_1,
-                    outline=BORDER_COLOR,
+                    outline=border_color,
                     width=GUI_BOX_BORDER_WIDTH,
                 )
 
-            s = str(n)
-            if not n:
-                s = ""
-            canvas.itemconfig(item_matrix[y][x][1], text=s)
+            num_string = str(num)
+            if not num:
+                num_string = ""
+            canvas.itemconfig(item_matrix[row][col][1], text=num_string)
 
-    GUI_FRAME_INDEX += 1
-    if GUI_FRAME_INDEX >= len(solution):
-        GUI_FRAME_INDEX = 0
+    frame += 1
+    if frame >= len(solution):
+        frame = 0
     canvas.update()
 
-    if GUI_FRAME_INDEX != 0:
+    if frame != 0:
         master.after(
-            GUI_DELAY, gui_replay, master, canvas, item_matrix, solution, puzzle_size
-        )
+            GUI_DELAY, gui_replay, master, frame, canvas, item_matrix, solution)
 
 
-def gui_close(event):
+def gui_close(_event):
+    ''' Закрытие приложения '''
     sys.exit(0)
 
 
-def gui_item_matrix(canvas, puzzle_size):
+def gui_item_matrix(canvas):
+    ''' Составление матрицы '''
     item_matrix = [
-        [[None, None] for x in range(puzzle_size)] for y in range(puzzle_size)
+        [[None, None] for col in range(PUZZLE_SIZE)] for row in range(PUZZLE_SIZE)
     ]
-    for y in range(puzzle_size):
-        for x in range(puzzle_size):
+    for row in range(PUZZLE_SIZE):
+        for col in range(PUZZLE_SIZE):
 
-            y0 = y * GUI_BOX_SIZE + GUI_BOX_SPACING
-            x0 = x * GUI_BOX_SIZE + GUI_BOX_SPACING
-            y1 = y0 + GUI_BOX_SIZE - GUI_BOX_SPACING
-            x1 = x0 + GUI_BOX_SIZE - GUI_BOX_SPACING
-            item_matrix[y][x][0] = canvas.create_rectangle(
-                y0, x0, y1, x1, dash=GUI_DASH, fill=GUI_COLOR_1
+            row0 = row * GUI_BOX_SIZE + GUI_BOX_SPACING
+            col0 = col * GUI_BOX_SIZE + GUI_BOX_SPACING
+            row1 = row0 + GUI_BOX_SIZE - GUI_BOX_SPACING
+            col1 = col0 + GUI_BOX_SIZE - GUI_BOX_SPACING
+            item_matrix[row][col][0] = canvas.create_rectangle(
+                row0, col0, row1, col1, dash=GUI_DASH, fill=GUI_COLOR_1
             )
 
-            yt = y0 + ((GUI_BOX_SIZE - GUI_BOX_SPACING) / 2)
-            xt = x0 + ((GUI_BOX_SIZE - GUI_BOX_SPACING) / 2)
-            item_matrix[y][x][1] = canvas.create_text(
-                (yt, xt), font=GUI_FONT, text="")
+            row_t = row0 + ((GUI_BOX_SIZE - GUI_BOX_SPACING) / 2)
+            col_t = col0 + ((GUI_BOX_SIZE - GUI_BOX_SPACING) / 2)
+            item_matrix[row][col][1] = canvas.create_text(
+                (row_t, col_t), font=GUI_FONT, text="")
 
     return item_matrix
 
 
-def visualizer(solution, puzzle_size, manual_mode):
+def visualizer(solution):
+    ''' Функция визуализации решения '''
     master = Tk()
-    canvas_width = (GUI_BOX_SIZE * puzzle_size) + GUI_BOX_SPACING
-    canvas_height = (GUI_BOX_SIZE * puzzle_size) + GUI_BOX_SPACING
+    canvas_width = (GUI_BOX_SIZE * PUZZLE_SIZE) + GUI_BOX_SPACING
+    canvas_height = (GUI_BOX_SIZE * PUZZLE_SIZE) + GUI_BOX_SPACING
     canvas = Canvas(
         master,
         width=canvas_width + 1,
@@ -126,9 +127,9 @@ def visualizer(solution, puzzle_size, manual_mode):
         highlightthickness=0,
     )
     canvas.pack()
-    MANUAL_MODE = manual_mode
-    item_matrix = gui_item_matrix(canvas, puzzle_size)
+    # MANUAL_MODE = manual_mode
+    item_matrix = gui_item_matrix(canvas)
     master.bind("<Escape>", gui_close)
-    master.after(0, gui_replay, master, canvas,
-                 item_matrix, solution, puzzle_size)
+    master.after(0, gui_replay, master, 0, canvas,
+                 item_matrix, solution)
     master.mainloop()

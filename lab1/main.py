@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     # визуализация
     if args.visualize:
-        visualizer(solution, 3, args.manual)
+        visualizer(solution)
     else:
         for state in solution:
             common.print_state(state)
