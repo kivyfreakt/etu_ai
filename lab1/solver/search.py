@@ -56,7 +56,7 @@ def dfs():
     steps = 1
     iterations = 0
 
-    while len(stack) != 0:
+    while stack:
         current_node = stack.pop()
         visited.add(current_node.node_id)
 
@@ -108,9 +108,9 @@ def bidirectional_search():
     visited1 = set(start)
     visited2 = set(goal)
 
-    while len(fringe1) or len(fringe2):
+    while fringe1 or fringe2:
         iterations += 1
-        if len(fringe1):
+        if fringe1:
             current1 = fringe1.pop()
 
             if current1.node_id in visited2:
@@ -131,7 +131,7 @@ def bidirectional_search():
                     fringe1.append(node)
                     common.TREE.add_node(current1.depth + 1, node)
 
-        if len(fringe2):
+        if fringe2:
             current2 = fringe2.pop()
 
             if current2.node_id in visited1:
