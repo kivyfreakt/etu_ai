@@ -2,10 +2,8 @@
     Реализации неинформированного поиска
 '''
 
-from collections import deque
-
-from solver import common
-from solver.tree import Node, Action
+from . import common
+from .tree import Node, Action
 
 
 def check_final(current_state: list) -> bool:
@@ -100,17 +98,17 @@ def bidirectional_search():
     start = common.TREE.get_root()
     goal = common.TREE2.get_root()
 
-    found = False
     fringe1 = [] + start
     fringe2 = [] + goal
 
+    # заменить надо бы
     temp_f1 = {start[0].node_id: start[0]}
     temp_f2 = {goal[0].node_id: goal[0]}
 
     visited1 = set(start)
     visited2 = set(goal)
 
-    while not found and (len(fringe1) or len(fringe2)):
+    while len(fringe1) or len(fringe2):
         iterations += 1
         if len(fringe1):
             current1 = fringe1.pop()
@@ -119,11 +117,9 @@ def bidirectional_search():
                 meet = temp_f2[current1.node_id]
 
                 # fix!
-                p = common.TREE2.get_path(meet)
-                del p[0]
-                path = list(reversed(common.TREE.get_path(current1))) + p
-
-                found = True
+                path2 = common.TREE2.get_path(meet)
+                del path2[0]
+                path = list(reversed(common.TREE.get_path(current1))) + path2
                 break
 
             for action, node_state in get_new_states(current1.current_state).items():
@@ -141,11 +137,9 @@ def bidirectional_search():
             if current2.node_id in visited1:
                 meet = temp_f1[current2.node_id]
 
-                p = common.TREE2.get_path(meet)
-                del p[0]
-                path = list(reversed(common.TREE.get_path(current2))) + p
-
-                found = True
+                path2 = common.TREE2.get_path(meet)
+                del path2[0]
+                path = list(reversed(common.TREE.get_path(current2))) + path2
                 break
 
             for action, node_state in get_new_states(current2.current_state).items():
@@ -157,5 +151,4 @@ def bidirectional_search():
                     fringe2.append(node)
                     common.TREE2.add_node(current1.depth + 1, node)
 
-    if found:
-        return path, iterations
+    return path, iterations

@@ -4,13 +4,14 @@
 
 from enum import Enum
 
-from solver import common
+from . import common
+
 
 class Tree:
     ''' Класс представления дерева '''
     nodes = None  # все узлы
 
-    def __init__(self, _flag = True):
+    def __init__(self, _flag=True):
         if _flag:
             node = Node(common.get_initial_state(), None, None, 0, 0)
         else:

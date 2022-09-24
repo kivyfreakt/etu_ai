@@ -53,7 +53,7 @@ if __name__ == '__main__':
     else:
         solution, iterations = bidirectional_search()
 
-    solution.reverse() # todo: пофиксить
+    solution.reverse()  # todo: пофиксить
 
     # завершить отсчет времени
     finish_time = process_time()
