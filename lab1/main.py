@@ -40,6 +40,7 @@ if __name__ == '__main__':
 
     # создать
     common.TREE = Tree()
+    common.TREE2 = Tree(False)
 
     # начать отсчет времени
     start_time = process_time()
@@ -51,6 +52,8 @@ if __name__ == '__main__':
         solution, iterations = dfs()
     else:
         solution, iterations = bidirectional_search()
+
+    solution.reverse() # todo: пофиксить
 
     # завершить отсчет времени
     finish_time = process_time()

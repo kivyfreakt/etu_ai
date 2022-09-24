@@ -3,7 +3,7 @@
 '''
 
 TREE = None  # дерево решения
-
+TREE2 = None
 
 def print_state(state: list):
     ''' Вывод состояния на экран '''

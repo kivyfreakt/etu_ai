@@ -8,22 +8,25 @@ from solver import common
 
 class Tree:
     ''' Класс представления дерева '''
-    __nodes = None  # все узлы
+    nodes = None  # все узлы
 
-    def __init__(self):
-        node = Node(common.get_initial_state(), None, None, 0, 0)
-        self.__nodes = {0: [node]}
+    def __init__(self, _flag = True):
+        if _flag:
+            node = Node(common.get_initial_state(), None, None, 0, 0)
+        else:
+            node = Node(common.get_finish_state(), None, None, 0, 0)
+        self.nodes = {0: [node]}
 
     def get_root(self) -> list:
         ''' Получить корень дерева '''
-        return list(self.__nodes[0])
+        return list(self.nodes[0])
 
     def add_node(self, level: int, new_node):
         ''' Добавить узел в дерево '''
-        if level not in self.__nodes:
-            self.__nodes[level] = [new_node]
+        if level not in self.nodes:
+            self.nodes[level] = [new_node]
         else:
-            self.__nodes[level].append(new_node)
+            self.nodes[level].append(new_node)
 
     def get_path(self, node) -> list:
         ''' Получение пути'''

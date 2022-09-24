@@ -91,26 +91,38 @@ def dfs():
     return common.TREE.get_path(stack.pop()), iterations
 
 
-# todo: refactor
 def bidirectional_search():
     ''' Двунаправленный поиск '''
 
-    start = Node(common.get_initial_state(), None, None, 0, 0)
-    goal = Node(common.get_finish_state(), None, None, 0, 0)
-
-    found, fringe1, visited1, came_from1 = False, deque(
-        [start]), set([start]), {start: None}
-    meet, fringe2, visited2, came_from2 = None, deque(
-        [goal]), set([goal]), {goal: None}
-
+    path = None
     iterations = 0
+
+    start = common.TREE.get_root()
+    goal = common.TREE2.get_root()
+
+    found = False
+    fringe1 = [] + start
+    fringe2 = [] + goal
+
+    temp_f1 = {start[0].node_id: start[0]}
+    temp_f2 = {goal[0].node_id: goal[0]}
+
+    visited1 = set(start)
+    visited2 = set(goal)
+
     while not found and (len(fringe1) or len(fringe2)):
         iterations += 1
         if len(fringe1):
             current1 = fringe1.pop()
 
             if current1.node_id in visited2:
-                meet = current1
+                meet = temp_f2[current1.node_id]
+
+                # fix!
+                p = common.TREE2.get_path(meet)
+                del p[0]
+                path = list(reversed(common.TREE.get_path(current1))) + p
+
                 found = True
                 break
 
@@ -119,14 +131,20 @@ def bidirectional_search():
                             current1.depth + 1, current1.depth + 1)
                 if node.node_id not in visited1:
                     visited1.add(node.node_id)
-                    fringe1.appendleft(node)
-                    came_from1[node] = current1
+                    temp_f1[node.node_id] = node
+                    fringe1.append(node)
+                    common.TREE.add_node(current1.depth + 1, node)
 
         if len(fringe2):
             current2 = fringe2.pop()
 
             if current2.node_id in visited1:
-                meet = current2
+                meet = temp_f1[current2.node_id]
+
+                p = common.TREE2.get_path(meet)
+                del p[0]
+                path = list(reversed(common.TREE.get_path(current2))) + p
+
                 found = True
                 break
 
@@ -135,11 +153,9 @@ def bidirectional_search():
                             current2.depth + 1, current2.depth + 1)
                 if node.node_id not in visited2:
                     visited2.add(node.node_id)
-                    fringe2.appendleft(node)
-                    came_from2[node] = current2
+                    temp_f2[node.node_id] = node
+                    fringe2.append(node)
+                    common.TREE2.add_node(current1.depth + 1, node)
 
     if found:
-        return came_from1, came_from2, meet
-
-    print(f"No path between {start} and {goal}")
-    return None, None, None
+        return path, iterations
