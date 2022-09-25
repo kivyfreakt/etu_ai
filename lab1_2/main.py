@@ -22,7 +22,7 @@ import argparse
 from time import process_time
 
 from solver import common
-from solver.search import dfs, bidirectional_search
+from solver.search import dfs, bidirectional_search, a_star
 from solver.visualizer import visualizer
 from solver.tree import Tree, Node
 
@@ -32,7 +32,7 @@ def main():
     # парсинг входных значений
     parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
     parser.add_argument('algorithm', type=str,
-                        help='name of the algorithm used (list: dfs, bds)')
+                        help='name of the algorithm used (list: dfs, bds, a)')
     parser.add_argument("-v", "--visualize", action='store_true',
                         help="Gui visualisation of puzzle solution")
     parser.add_argument("-m", "--manual", action='store_true',
@@ -52,25 +52,30 @@ def main():
     iterations = 0
     if args.algorithm == "dfs":
         solution, iterations = dfs()
-    else:
+    elif args.algorithm == "bds":
         solution, iterations = bidirectional_search()
-
-    solution.reverse()  # todo: пофиксить
-
-    # завершить отсчет времени
-    finish_time = process_time()
-
-    # визуализация
-    if args.visualize:
-        visualizer(solution)
     else:
-        for state in solution:
-            common.print_state(state)
+        solution, iterations = a_star()
 
-    # вывод результатов
-    print(f"Iteration count: {iterations}")
-    print(f"Nodes: {Node.get_nodes_count()}")
-    print(f"Time: {(finish_time-start_time)*1000} ms")
+    if solution and iterations:
+        solution.reverse()  # todo: пофиксить
+
+        # завершить отсчет времени
+        finish_time = process_time()
+
+        # визуализация
+        if args.visualize:
+            visualizer(solution)
+        else:
+            for state in solution:
+                common.print_state(state)
+
+        # вывод результатов
+        print(f"Iteration count: {iterations}")
+        print(f"Nodes: {Node.get_nodes_count()}")
+        print(f"Time: {(finish_time-start_time)*1000} ms")
+    else:
+        print("Error search =(")
 
 
 if __name__ == '__main__':

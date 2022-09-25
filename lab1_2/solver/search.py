@@ -134,3 +134,8 @@ def bidirectional_search():
                     common.TREE2.add_node(node)
 
     return None, None
+
+def a_star():
+    ''' Поиск алгоритмом a-star '''
+    print("Todo)))")
+    return None, None
