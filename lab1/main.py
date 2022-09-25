@@ -26,7 +26,9 @@ from solver.search import dfs, bidirectional_search
 from solver.visualizer import visualizer
 from solver.tree import Tree, Node
 
-if __name__ == '__main__':
+
+def main():
+    ''' Главная функция программы '''
     # парсинг входных значений
     parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
     parser.add_argument('algorithm', type=str,
@@ -69,3 +71,7 @@ if __name__ == '__main__':
     print(f"Iteration count: {iterations}")
     print(f"Nodes: {Node.get_nodes_count()}")
     print(f"Time: {(finish_time-start_time)*1000} ms")
+
+
+if __name__ == '__main__':
+    main()

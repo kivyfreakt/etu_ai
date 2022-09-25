@@ -9,25 +9,33 @@ from . import common
 
 class Tree:
     ''' Класс представления дерева '''
-    nodes = None  # все узлы
 
     def __init__(self, _flag=True):
+        self.__hashset = {}  # хеши всех узлов
+
         if _flag:
             node = Node(common.get_initial_state(), None, None, 0, 0)
         else:
             node = Node(common.get_finish_state(), None, None, 0, 0)
-        self.nodes = {0: [node]}
+
+        self.__hashset[node.node_id] = node
 
     def get_root(self) -> list:
         ''' Получить корень дерева '''
-        return list(self.nodes[0])
+        return [list(self.__hashset.values())[0]]
 
-    def add_node(self, level: int, new_node):
+    def get_node(self, node_id: int):
+        ''' Получить узел по идентификатору (хэшу)'''
+        return self.__hashset[node_id]
+
+    def add_node(self, new_node):
         ''' Добавить узел в дерево '''
-        if level not in self.nodes:
-            self.nodes[level] = [new_node]
-        else:
-            self.nodes[level].append(new_node)
+        if not self.is_in_tree(new_node.node_id):
+            self.__hashset[new_node.node_id] = new_node
+
+    def is_in_tree(self, node_id: int) -> bool:
+        ''' Проверка, есть ли состояние в дереве '''
+        return node_id in self.__hashset
 
     def get_path(self, node) -> list:
         ''' Получение пути'''
@@ -55,27 +63,22 @@ class Action(Enum):
 
 class Node:
     ''' Класс представления узла '''
-    current_state = None  # Состояние в пространстве состояний, которому соответствует данный узел
-    parent_node = None  # Указатель на родительский узел
-    # Действие, которое было применено к родительскому узлу для формирования данного узла
-    previous_action = None
-    # Стоимость пути от начального состояния до данного узла g(n)
-    path_cost = None
-    depth = None  # Количество этапов пути от начального состояния (глубина)
-    node_id = None  # уникальный идентификатор узла
-
-    nodes_count = 0
+    __nodes_count = 0
 
     def __init__(self, state, parent, action, cost, depth):
+        # Состояние в пространстве состояний, которому соответствует данный узел
         self.current_state = state
-        self.parent_node = parent
+        self.parent_node = parent  # Указатель на родительский узел
+        # Действие, которое было применено к родительскому узлу для формирования данного узла
         self.previous_action = action
+        # Стоимость пути от начального состояния до данного узла g(n)
         self.path_cost = cost
+        # Количество этапов пути от начального состояния (глубина)
         self.depth = depth
-        self.node_id = hash(tuple(state))
-        Node.nodes_count += 1
+        self.node_id = hash(tuple(state))  # уникальный идентификатор узла
+        Node.__nodes_count += 1
 
     @classmethod
     def get_nodes_count(cls) -> int:
         ''' Статический метод класса, возвращающий количество узлов '''
-        return cls.nodes_count + 1
+        return cls.__nodes_count + 1
