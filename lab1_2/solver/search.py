@@ -79,8 +79,27 @@ def dfs():
 
     return None, None
 
+def heuristic1(state):
+    ''' не на своих местах '''
+    count = 0
+    for i, v in enumerate(state):
+        if get_finish_state()[i] == v:
+            count += 1
+    
+    return count
 
-def bidirectional_search():
+def heuristic2(state):
+    ''' Manhatten '''
+    res = 0
+    for i in range(common.SIZE**2):
+        if state[i] != 0 and state[i] != get_finish_state()[i]:
+            ci = get_finish_state().index(state[i])
+            y = (i // common.SIZE) - (ci // common.SIZE)
+            x = (i % common.SIZE) - (ci % common.SIZE)
+            res += abs(y) + abs(x)
+    return res
+
+def bidirectional_search(heuristic):
     ''' Двунаправленный поиск '''
 
     iterations = 0
@@ -134,8 +153,11 @@ def bidirectional_search():
                     common.TREE2.add_node(node)
 
     return None, None
+    
 
-def a_star():
-    ''' Поиск алгоритмом a-star '''
-    print("Todo)))")
-    return None, None
+
+def a_star(choice, heuristic):
+    if choice:
+        return bidirectional_search(heuristic) 
+    else:
+        return dfs(heuristic)

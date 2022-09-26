@@ -1,9 +1,10 @@
 '''
     Общие функции и переменные модуля
 '''
-
+MANUAL = None
 TREE = None  # дерево решения
 TREE2 = None
+SIZE = 3
 
 def print_state(state: list):
     ''' Вывод состояния на экран '''
