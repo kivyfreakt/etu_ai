@@ -26,9 +26,6 @@ GUI_COLOR_BLACK = "#000000"
 
 GUI_DASH = (5, 4, 5, 3)
 
-# MANUAL_MODE = False
-
-
 def gui_replay(master, frame, canvas, item_matrix, solution):
     ''' Проигрывание анимации'''
     numbers = solution[frame]

@@ -41,6 +41,7 @@ def main():
     args = parser.parse_args()
 
     # создать
+    common.MANUAL = args.manual
     common.TREE = Tree()
     common.TREE2 = Tree(False)
 
