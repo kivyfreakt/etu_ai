@@ -55,7 +55,7 @@ def dfs():
         visited.add(current_node.node_id)
 
         iterations += 1
-        
+
         if common.MANUAL:
             print(f"Iteration {iterations}")
             print("Current node: ")
@@ -82,7 +82,7 @@ def dfs():
                     common.print_state(new_state)
                     print("---")
                 continue
-            
+
             new_node = Node(new_state, current_node,
                             action, level + 1, level + 1)
             neighbors.append(new_node)
@@ -95,7 +95,7 @@ def dfs():
                 print("---")
             if next_node.node_id not in visited:
                 stack.append(next_node)
-        
+
         if common.MANUAL:
             print("Press Enter to continue... ")
             input()
@@ -145,19 +145,18 @@ def bidirectional_search():
             for action, node_state in get_new_states(current1.current_state).items():
                 node = Node(node_state, current1, action,
                             current1.depth + 1, current1.depth + 1)
-                
+
                 neighbors.append(node)
-            
+
             for next_node in neighbors:
                 if common.MANUAL:
                     print("Nodes descendants: ")
                     common.print_state(next_node.current_state)
                     print("---")
                 if next_node.node_id not in visited1:
-                        visited1.add(next_node.node_id)
-                        fringe1.append(next_node)
-                        common.TREE.add_node(next_node)
-
+                    visited1.add(next_node.node_id)
+                    fringe1.append(next_node)
+                    common.TREE.add_node(next_node)
 
         if fringe2:
             current2 = fringe2.pop()
@@ -172,7 +171,7 @@ def bidirectional_search():
                     print("MEET POINT FIND")
                     common.print_state(current2.current_state)
                     print("---")
-                
+
                 meet = common.TREE.get_node(current2.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
@@ -184,22 +183,23 @@ def bidirectional_search():
                 node = Node(node_state, current2, action,
                             current2.depth + 1, current2.depth + 1)
                 neighbors.append(node)
-        
+
             for next_node in neighbors:
                 if common.MANUAL:
                     print("Nodes descendants: ")
                     common.print_state(next_node.current_state)
                     print("---")
                 if node.node_id not in visited2:
-                        visited2.add(node.node_id)
-                        fringe2.append(node)
-                        common.TREE2.add_node(node)
-        
+                    visited2.add(node.node_id)
+                    fringe2.append(node)
+                    common.TREE2.add_node(node)
+
         if common.MANUAL:
             print("Press Enter to continue... ")
             input()
 
     return None, None
+
 
 def a_star():
     ''' Поиск алгоритмом a-star '''
