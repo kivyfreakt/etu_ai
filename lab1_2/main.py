@@ -20,12 +20,19 @@
 
 import argparse
 from time import process_time
+from random import shuffle
 
 from solver import common
-from solver.search import dfs, bidirectional_search, a_star
+from solver.search import dfs, bidirectional_search, a_star, heuristic1, heuristic2
 from solver.visualizer import visualizer
 from solver.tree import Tree, Node
 
+INITIAL_STATE = shuffle([6, 0, 8,
+            5, 2, 1,
+            4, 3, 7, ])
+FINISH_STATE = shuffle([1, 2, 3,
+            8, 0, 4,
+            7, 6, 5, ])
 
 def main():
     ''' Главная функция программы '''
@@ -51,11 +58,14 @@ def main():
     solution = []
     iterations = 0
     if args.algorithm == "dfs":
-        solution, iterations = dfs()
+        solution, iterations = dfs(0)
     elif args.algorithm == "bds":
-        solution, iterations = bidirectional_search()
+        solution, iterations = bidirectional_search(0)
     else:
-        solution, iterations = a_star()
+        solution, iterations = a_star("bds", heuristic1)
+        #solution, iterations = a_star("bds", heuristic2)
+        #solution, iterations = a_star("dfs", heuristic1)
+        #solution, iterations = a_star("dfs", heuristic2)
 
     if solution and iterations:
         solution.reverse()  # todo: пофиксить
