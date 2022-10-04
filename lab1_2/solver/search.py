@@ -41,25 +41,28 @@ def get_new_states(current_state: list) -> dict:
 
     return new_states
 
+
 def heuristic1(state):
     ''' не на своих местах '''
     count = 0
-    for i, v in enumerate(state):
-        if common.get_finish_state()[i] == v:
+    for i, num in enumerate(state):
+        if common.get_finish_state()[i] == num:
             count += 1
-    
+
     return count
+
 
 def heuristic2(state):
     ''' Manhatten '''
     res = 0
     for i in range(common.SIZE**2):
         if state[i] != 0 and state[i] != common.get_finish_state()[i]:
-            ci = common.get_finish_state().index(state[i])
-            y = (i // common.SIZE) - (ci // common.SIZE)
-            x = (i % common.SIZE) - (ci % common.SIZE)
-            res += abs(y) + abs(x)
+            c_i = common.get_finish_state().index(state[i])
+            diff_y = (i // common.SIZE) - (c_i // common.SIZE)
+            diff_x = (i % common.SIZE) - (c_i % common.SIZE)
+            res += abs(diff_y) + abs(diff_x)
     return res
+
 
 def dfs(heuristic):
     ''' Поиск в глубину '''
@@ -80,12 +83,13 @@ def dfs(heuristic):
 
         new_states = get_new_states(current_node.current_state)
         if not isinstance(heuristic, int):
-            new_states = dict(sorted(new_states.items(), key = lambda item: heuristic(item[1])))
+            new_states = dict(
+                sorted(new_states.items(), key=lambda item: heuristic(item[1])))
 
         neighbors = []
         level = current_node.depth
         for action, new_state in new_states.items():
-            
+
             new_state_hash = hash(tuple(new_state))
             if common.TREE.is_in_tree(new_state_hash):
                 continue
@@ -101,6 +105,7 @@ def dfs(heuristic):
 
     return None, None
 
+# todo: FIX!!!!!!!!
 def bidirectional_search(heuristic):
     ''' Двунаправленный поиск '''
 
@@ -129,7 +134,8 @@ def bidirectional_search(heuristic):
 
             new_states = get_new_states(current1.current_state)
             if not isinstance(heuristic, int):
-                new_states = dict(sorted(new_states.items(), key = lambda item: heuristic(item[1])))
+                new_states = dict(
+                    sorted(new_states.items(), key=lambda item: heuristic(item[1])))
 
             for action, node_state in new_states.items():
                 node = Node(node_state, current1, action,
@@ -146,12 +152,13 @@ def bidirectional_search(heuristic):
                 meet = common.TREE.get_node(current2.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
-                path = path2 + list(reversed(common.TREE.get_path(current2))) 
+                path = path2 + list(reversed(common.TREE.get_path(current2)))
                 return path, iterations
 
             new_states = get_new_states(current2.current_state)
             if not isinstance(heuristic, int):
-                new_states = dict(sorted(new_states.items(), key = lambda item: heuristic(item[1])))
+                new_states = dict(
+                    sorted(new_states.items(), key=lambda item: heuristic(item[1])))
 
             for action, node_state in new_states.items():
                 node = Node(node_state, current2, action,
@@ -162,13 +169,14 @@ def bidirectional_search(heuristic):
                     common.TREE2.add_node(node)
 
     return None, None
-    
 
 
 def a_star(algorithm, heuristic):
+    ''' Враппер модифицированных алгоритмов '''
     if algorithm == "bds":
-        return bidirectional_search(heuristic) 
-    elif algorithm == "dfs":
+        return bidirectional_search(heuristic)
+    if algorithm == "dfs":
         return dfs(heuristic)
-    else:
-        print("Incorrect input")
+
+    print("Incorrect input")
+    return None, None

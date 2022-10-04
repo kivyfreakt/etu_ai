@@ -20,26 +20,20 @@
 
 import argparse
 from time import process_time
-from random import shuffle
-
 from solver import common
 from solver.search import dfs, bidirectional_search, a_star, heuristic1, heuristic2
 from solver.visualizer import visualizer
 from solver.tree import Tree, Node
 
-INITIAL_STATE = shuffle([6, 0, 8,
-            5, 2, 1,
-            4, 3, 7, ])
-FINISH_STATE = shuffle([1, 2, 3,
-            8, 0, 4,
-            7, 6, 5, ])
 
 def main():
     ''' Главная функция программы '''
     # парсинг входных значений
     parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
-    parser.add_argument('algorithm', type=str,
-                        help='name of the algorithm used (list: dfs, bds, a)')
+    parser.add_argument("algorithm", type=str,
+                        help="name of the algorithm used (list: dfs, bds)")
+    parser.add_argument("heuristic", type=str,
+                        help="type of the heuristic (list: position[1], manhatten[2], none)")
     parser.add_argument("-v", "--visualize", action='store_true',
                         help="Gui visualisation of puzzle solution")
     parser.add_argument("-m", "--manual", action='store_true',
@@ -58,14 +52,19 @@ def main():
     solution = []
     iterations = 0
     if args.algorithm == "dfs":
-        solution, iterations = dfs(0)
-    elif args.algorithm == "bds":
-        solution, iterations = bidirectional_search(0)
+        if args.heuristic in ('1', 'position'):
+            solution, iterations = a_star("dfs", heuristic1)
+        elif args.heuristic in ('2', 'manhatten'):
+            solution, iterations = a_star("dfs", heuristic2)
+        else:
+            solution, iterations = dfs(0)
     else:
-        solution, iterations = a_star("bds", heuristic1)
-        #solution, iterations = a_star("bds", heuristic2)
-        #solution, iterations = a_star("dfs", heuristic1)
-        #solution, iterations = a_star("dfs", heuristic2)
+        if args.heuristic in ('1', 'position'):
+            solution, iterations = a_star("bds", heuristic1)
+        elif args.heuristic in ('2', 'manhatten'):
+            solution, iterations = a_star("bds", heuristic2)
+        else:
+            solution, iterations = bidirectional_search(0)
 
     if solution and iterations:
         solution.reverse()  # todo: пофиксить
