@@ -20,6 +20,7 @@
 
 import argparse
 from time import process_time
+from random import shuffle
 from solver import common
 from solver.search import dfs, bidirectional_search, a_star, heuristic1, heuristic2
 from solver.visualizer import visualizer
@@ -30,6 +31,8 @@ def main():
     ''' Главная функция программы '''
     # парсинг входных значений
     parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
+    parser.add_argument("states", type=str,
+                        help="how to generate states: random or not (list: initialization[0], random[1])")
     parser.add_argument("algorithm", type=str,
                         help="name of the algorithm used (list: dfs, bds)")
     parser.add_argument("heuristic", type=str,
@@ -51,6 +54,12 @@ def main():
     # поиск решения
     solution = []
     iterations = 0
+
+    if args.states in ('1', 'random'):
+        shuffle(common.INITIAL_STATE)
+        shuffle(common.FINISH_STATE)
+        print(common.INITIAL_STATE)
+
     if args.algorithm == "dfs":
         if args.heuristic in ('1', 'position'):
             solution, iterations = a_star("dfs", heuristic1)
@@ -78,7 +87,7 @@ def main():
         else:
             for state in solution:
                 common.print_state(state)
-                #break
+                break
 
         # вывод результатов
         print(f"Iteration count: {iterations}")
