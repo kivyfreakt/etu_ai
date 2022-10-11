@@ -78,6 +78,7 @@ def main():
         else:
             for state in solution:
                 common.print_state(state)
+                #break
 
         # вывод результатов
         print(f"Iteration count: {iterations}")

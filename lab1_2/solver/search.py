@@ -129,7 +129,7 @@ def bidirectional_search(heuristic):
                 meet = common.TREE2.get_node(current1.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
-                path = list(reversed(common.TREE.get_path(current1))) + path2
+                path = list(reversed(path2)) + common.TREE.get_path(current1)
                 return path, iterations
 
             new_states = get_new_states(current1.current_state)
@@ -152,7 +152,7 @@ def bidirectional_search(heuristic):
                 meet = common.TREE.get_node(current2.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
-                path = path2 + list(reversed(common.TREE.get_path(current2)))
+                path = common.TREE.get_path(current2) + list(reversed(path2))
                 return path, iterations
 
             new_states = get_new_states(current2.current_state)
