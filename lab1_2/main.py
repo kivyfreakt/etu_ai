@@ -31,16 +31,16 @@ def main():
     ''' Главная функция программы '''
     # парсинг входных значений
     parser = argparse.ArgumentParser(description="Solve 8-puzzle game")
-    parser.add_argument("states", type=str,
-                        help="how to generate states: random or not (list: initialization[0], random[1])")
     parser.add_argument("algorithm", type=str,
                         help="name of the algorithm used (list: dfs, bds)")
     parser.add_argument("heuristic", type=str,
                         help="type of the heuristic (list: position[1], manhatten[2], none)")
     parser.add_argument("-v", "--visualize", action='store_true',
-                        help="Gui visualisation of puzzle solution")
+                        help="gui visualisation of puzzle solution")
     parser.add_argument("-m", "--manual", action='store_true',
                         help="step-by-step mode of operation of the program")
+    parser.add_argument("-r", "--random", action='store_true',
+                        help="generate random states")
 
     args = parser.parse_args()
 
@@ -55,10 +55,14 @@ def main():
     solution = []
     iterations = 0
 
-    if args.states in ('1', 'random'):
+    if args.manual:
+        common.MANUAL = True
+
+    if args.random:
         shuffle(common.INITIAL_STATE)
         shuffle(common.FINISH_STATE)
         print(common.INITIAL_STATE)
+        print(common.FINISH_STATE)
 
     if args.algorithm == "dfs":
         if args.heuristic in ('1', 'position'):
@@ -76,7 +80,7 @@ def main():
             solution, iterations = bidirectional_search(0)
 
     if solution and iterations:
-        solution.reverse()  # todo: пофиксить
+        solution.reverse()
 
         # завершить отсчет времени
         finish_time = process_time()
@@ -85,6 +89,9 @@ def main():
         if args.visualize:
             visualizer(solution)
         else:
+            # pass
+            # common.print_state(solution[0])
+            # common.print_state(solution[-1])
             for state in solution:
                 with open("otus.txt", "w") as file:
                     file.write("hello world")
@@ -95,7 +102,7 @@ def main():
         print(f"Nodes: {Node.get_nodes_count()}")
         print(f"Time: {(finish_time-start_time)*1000} ms")
     else:
-        print("Error search =(")
+        print("No solution")
 
 
 if __name__ == '__main__':
