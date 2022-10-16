@@ -89,12 +89,7 @@ def main():
         if args.visualize:
             visualizer(solution)
         else:
-            # pass
-            # common.print_state(solution[0])
-            # common.print_state(solution[-1])
             for state in solution:
-                with open("otus.txt", "w") as file:
-                    file.write("hello world")
                 common.print_state(state)
 
         # вывод результатов
