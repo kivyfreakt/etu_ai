@@ -105,7 +105,7 @@ def dfs(heuristic):
 
     return None, None
 
-# todo: FIX!!!!!!!!
+
 def bidirectional_search(heuristic):
     ''' Двунаправленный поиск '''
 
@@ -126,6 +126,7 @@ def bidirectional_search(heuristic):
             current1 = fringe1.pop()
 
             if current1.node_id in visited2:
+                # print("VARIANT 1")
                 meet = common.TREE2.get_node(current1.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
@@ -149,11 +150,12 @@ def bidirectional_search(heuristic):
             current2 = fringe2.pop()
 
             if current2.node_id in visited1:
+                # print("VARIANT 2")
                 meet = common.TREE.get_node(current2.node_id)
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
-                path = common.TREE.get_path(current2) + list(reversed(path2))
-                return path, iterations
+                path = list(reversed(path2)) + common.TREE.get_path(current2)
+                return list(reversed(path)), iterations
 
             new_states = get_new_states(current2.current_state)
             if not isinstance(heuristic, int):
