@@ -172,16 +172,16 @@ def bidirectional_search(heuristic):
                 new_states = dict(
                     sorted(new_states.items(), key=lambda item: heuristic(item[1])))
 
-            neighbors = []
-            for action, node_state in new_states:
+            neighbors1 = []
+            for action, node_state in new_states.items():
                 node = Node(node_state, current1, action,
                             current1.depth + 1, current1.depth + 1)
 
-                neighbors.append(node)
+                neighbors1.append(node)
 
             if common.MANUAL:
                 print("Nodes descendants: ")
-            for next_node in neighbors:
+            for next_node in neighbors1:
                 if common.MANUAL:
                     common.print_state(next_node.current_state)
                     print("---")
@@ -216,22 +216,22 @@ def bidirectional_search(heuristic):
                 new_states = dict(
                     sorted(new_states.items(), key=lambda item: heuristic(item[1])))
 
-            neighbors = []
-            for action, node_state in new_states:
+            neighbors2 = []
+            for action, node_state in new_states.items():
                 node = Node(node_state, current2, action,
                             current2.depth + 1, current2.depth + 1)
-                neighbors.append(node)
+                neighbors2.append(node)
 
             if common.MANUAL:
                 print("Nodes descendants: ")
-            for next_node in neighbors:
+            for next_node in neighbors2:
                 if common.MANUAL:
                     common.print_state(next_node.current_state)
                     print("---")
-                if node.node_id not in visited2:
-                    visited2.add(node.node_id)
-                    fringe2.append(node)
-                    common.TREE2.add_node(node)
+                if next_node.node_id not in visited2:
+                    visited2.add(next_node.node_id)
+                    fringe2.append(next_node)
+                    common.TREE2.add_node(next_node)
 
         if common.MANUAL:
             print("Press Enter to continue... ")
