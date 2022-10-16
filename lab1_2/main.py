@@ -36,11 +36,11 @@ def main():
     parser.add_argument("heuristic", type=str,
                         help="type of the heuristic (list: position[1], manhatten[2], none)")
     parser.add_argument("-v", "--visualize", action='store_true',
-                        help="Gui visualisation of puzzle solution")
+                        help="gui visualisation of puzzle solution")
     parser.add_argument("-m", "--manual", action='store_true',
                         help="step-by-step mode of operation of the program")
     parser.add_argument("-r", "--random", action='store_true',
-                        help="Generate random states")
+                        help="generate random states")
 
     args = parser.parse_args()
 
@@ -54,6 +54,9 @@ def main():
     # поиск решения
     solution = []
     iterations = 0
+
+    if args.manual:
+        common.MANUAL = True
 
     if args.random:
         shuffle(common.INITIAL_STATE)

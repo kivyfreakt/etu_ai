@@ -2,7 +2,7 @@
     Общие функции и переменные модуля
 '''
 MANUAL = None
-TREE = None 
+TREE = None
 TREE2 = None
 SIZE = 3
 INITIAL_STATE = [6, 0, 8,
