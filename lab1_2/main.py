@@ -86,8 +86,9 @@ def main():
             visualizer(solution)
         else:
             for state in solution:
+                with open("otus.txt", "w") as file:
+                    file.write("hello world")
                 common.print_state(state)
-                break
 
         # вывод результатов
         print(f"Iteration count: {iterations}")
