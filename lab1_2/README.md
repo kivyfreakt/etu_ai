@@ -34,7 +34,7 @@ positional arguments:
 options:
   -h, --help       show this help message and exit
   -v, --visualize  Gui visualisation of puzzle solution
-  -m, --manual     step-by-step mode of operation of the program
+  -m, --manual     step-by-step mode of operation of the program](https://dropmefiles.com/pHEtL)
 
 
 ```
@@ -42,17 +42,17 @@ options:
 Для того, чтоб запусть нужный поиск, в аргументах командной строки нужно указать необходимый тип алгоритма, например:
 
 ```sh
-python main.py dfs
+python main.py dfs 0
 ```
 
 Если хотим использовать пошаговый режим (в котором детально показана информация о текущем состоянии на каждом шаге поиска), то нужно запустить программу с ключом *-m*
 
 ```sh
-python main.py -m dfs
+python main.py -m dfs 0
 ```
 
 Если хотим увидеть визуализацию решения, то запускаем программу с ключом *-v*
 
 ```sh
-python main.py -v dfs
+python main.py -v dfs 0
 ```
