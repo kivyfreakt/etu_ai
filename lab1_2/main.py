@@ -96,6 +96,10 @@ def main():
         print(f"Iteration count: {iterations}")
         print(f"Nodes: {Node.get_nodes_count()}")
         print(f"Time: {(finish_time-start_time)*1000} ms")
+        if args.algorithm == "dfs":
+            print(f"Depth: {common.TREE.get_node(hash(tuple(common.FINISH_STATE))).depth} ")
+        else:
+            print(f"Depth: {common.TREE2.get_node(hash(tuple(common.FINISH_STATE))).depth} ")
     else:
         print("No solution")
 

@@ -165,6 +165,8 @@ def bidirectional_search(heuristic):
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
                 path = list(reversed(path2)) + common.TREE.get_path(current1)
+                
+                common.TREE2.get_node(hash(tuple(common.FINISH_STATE))).depth = meet.depth + current1.depth
                 return path, iterations
 
             new_states = get_new_states(current1.current_state)
@@ -209,6 +211,7 @@ def bidirectional_search(heuristic):
                 path2 = common.TREE2.get_path(meet)
                 del path2[0]
                 path = list(reversed(path2)) + common.TREE.get_path(current2)
+                common.TREE2.get_node(hash(tuple(common.FINISH_STATE))).depth = meet.depth + current1.depth
                 return list(reversed(path)), iterations
 
             new_states = get_new_states(current2.current_state)
